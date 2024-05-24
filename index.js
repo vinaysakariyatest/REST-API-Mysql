@@ -9,8 +9,10 @@ app.use(express.json({}));
 app.use(bodyParser.urlencoded({ extended: false }))
 
 const userRoute = require('./routes/user')
+const postRoute = require('./routes/post')
 
 app.use("/users",userRoute)
+app.use("/post",postRoute)
 // app.use(require('./routes/user'))
 
 const PORT = process.env.PORT
