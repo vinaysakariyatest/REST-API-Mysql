@@ -3,7 +3,8 @@ const sequelize = require('sequelize')
 
 // Create New User
 module.exports.addUser = async (req,res) =>{
-    try {
+    try { 
+        
         const {name, email, password} = req.body;
          
         const user = await User.create(req.body);
