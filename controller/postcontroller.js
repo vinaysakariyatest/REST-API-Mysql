@@ -3,12 +3,19 @@ const jwt = require("jsonwebtoken");
 
 module.exports.createPost = async (req, res) => {
     try {
-        const {title, content, imageUrl}  = req.body
-        if(!title || !content || !imageUrl){
+        const {title, content, imageUrl, categoryId}  = req.body
+        if(!title || !content || !imageUrl || !categoryId){
             return res.status(400).json({ message: "Please Fill the all Fields" });
         }
 
-        const post = await Post.create(req.body)
+        const userId = req.userData.userId
+        const post = await Post.create({
+            title:req.body.title,
+            content:req.body.content,
+            imageUrl:req.body.imageUrl,
+            categoryId:req.body.categoryId,
+            userId:req.userData.userId
+        })
 
         return res.status(201).json({ message: "Post Created Successfully" });
     } catch (error) {
