@@ -1,4 +1,4 @@
-const { Post} = require('../models')
+const { Post, category} = require('../models')
 const jwt = require("jsonwebtoken");
 
 module.exports.createPost = async (req, res) => {
@@ -8,16 +8,22 @@ module.exports.createPost = async (req, res) => {
             return res.status(400).json({ message: "Please Fill the all Fields" });
         }
 
-        const userId = req.userData.userId
-        const post = await Post.create({
-            title:req.body.title,
-            content:req.body.content,
-            imageUrl:req.body.imageUrl,
-            categoryId:req.body.categoryId,
-            userId:req.userData.userId
-        })
+        const findcat = await category.findByPk(categoryId)
+        // console.log(findcat)
+        if(findcat){
+                const userId = req.userData.userId
+                const post = await Post.create({
+                title:req.body.title,
+                content:req.body.content,
+                imageUrl:req.body.imageUrl,
+                categoryId:req.body.categoryId,
+                userId:req.userData.userId
+            })
+            return res.status(201).json({ message: "Post Created Successfully" });
+        }else{
+            return res.status(400).json({ message: "Category Id not Found" });
+        }
 
-        return res.status(201).json({ message: "Post Created Successfully" });
     } catch (error) {
         console.error("Error creating Post:", error);
         return res.status(500).json({ error: "Internal Server Error" });
