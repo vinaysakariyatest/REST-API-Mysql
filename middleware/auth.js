@@ -9,8 +9,6 @@ module.exports.check_token = async (req,res,next) => {
         next();
     } catch (error) {
         // console.error("Error creating Post:", error);
-        return res.status(401).json({ message: "Unauthorized access",
-        error
-    });
+        return res.status(401).json({ message: "Unauthorized access"});
     }
 }

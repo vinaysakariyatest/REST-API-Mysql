@@ -8,6 +8,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(express.json({}));
 app.use(bodyParser.urlencoded({ extended: false }))
+app.set('view engine', 'ejs');
+app.set('views','./views')
 
 const userRoute = require('./routes/user')
 const postRoute = require('./routes/post')

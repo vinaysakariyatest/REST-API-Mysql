@@ -3,6 +3,8 @@ const sequelize = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+const mailer = require('../helpers/mailer')
+
 //Signin User
 module.exports.signin = async (req, res) => {
   try {
@@ -18,6 +20,10 @@ module.exports.signin = async (req, res) => {
     } else {
       req.body.password = await bcrypt.hash(password, 10);
       const user = await User.create(req.body);
+
+      const msg = '<p> Hii '+name+' Please <a href="http://localhost:4000/mail-verification?id='+user.id+'">Verify</a> your mail.</p>'
+
+      mailer.sendMail(email, 'Mail verification', msg)
 
       return res.status(201).json({ message: "User Created Successfully" });
     }
@@ -82,6 +88,16 @@ module.exports.login = async (req, res) => {
     }
   }
 
+// Update Password
+module.exports.updatePassword = async (req, res) => {
+  try {
+      
+  } catch (error) {
+      console.error("Error creating User:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
 // get All User
 // module.exports.viewUser = async (req,res,next) => {
 //     try {
@@ -93,34 +109,7 @@ module.exports.login = async (req, res) => {
 //     }
 // }
 
-//Update User
-// module.exports.updateUser = async (req,res) =>{
-//     try {
-//         const {id} = req.params
 
-//         if(!id) {
-//             return res
-//                 .status(400)
-//                 .json({message:"Please pass all the required inputs!"})
-//         }
-
-//         const updateUser = await User.update(
-//             {...req.body},
-//             {where : {id}}
-//         )
-
-//         if(updateUser[0] === 0){
-//             return res.status(404).json({message:"User Not Found"})
-//         }
-
-//         return res.status(200)
-//         .json({message:"User updated"})
-
-//     } catch (error) {
-//         console.error("Error creating User:", error);
-//         return res.status(500).json({ error: "Internal Server Error" });
-//     }
-// }
 
 // Delete User
 // module.exports.deleteUser = async(req,res) => {
