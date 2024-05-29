@@ -14,12 +14,14 @@ app.set('views','./views')
 const userRoute = require('./routes/user')
 const postRoute = require('./routes/post')
 const commentRoute = require('./routes/comment');
-const catRouter = require('./routes/category')
+const catRoute = require('./routes/category')
+const authRoute = require('./routes/authRoute')
 
 app.use("/users",userRoute)
 app.use("/post",postRoute)
 app.use("/comment",commentRoute)
-app.use('/category',catRouter)
+app.use('/category',catRoute)
+app.use('/',authRoute)
 // app.use(require('./routes/user'))
 
 const PORT = process.env.PORT

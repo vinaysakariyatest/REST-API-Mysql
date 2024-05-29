@@ -34,6 +34,8 @@ module.exports.createPost = async (req, res) => {
 module.exports.viewPost = async (req,res) => {
     try {
         const getPost = await Post.findAll()
+        // const getPost = await req.body
+        console.log(getPost)
         return res.status(200).json({getPost})
     } catch (error) {
         console.error("Error Getting Post:", error);

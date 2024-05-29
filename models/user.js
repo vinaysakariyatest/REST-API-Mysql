@@ -20,7 +20,8 @@ module.exports = (sequelize, DataTypes) => {
     is_verified: {
       type: DataTypes.INTEGER,
       defaultValue: 0
-    }
+    },
+    token: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'User',
