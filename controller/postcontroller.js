@@ -1,25 +1,32 @@
+const { upload } = require('../helpers/image-uploader');
 const { Post, category} = require('../models')
 const jwt = require("jsonwebtoken");
+const path = require('path')
+const multer = require('multer');
+const { where } = require('sequelize');
 
 module.exports.createPost = async (req, res) => {
     try {
-        const {title, content, imageUrl, categoryId}  = req.body
-        if(!title || !content || !imageUrl || !categoryId){
-            return res.status(400).json({ message: "Please Fill the all Fields" });
-        }
+        const {title, content, categoryId}  = req.body;
+        // if(!title || !content || !imageUrl || !categoryId){
+        //     return res.status(400).json({ message: "Please Fill the all Fields" });
+        // }
 
         const findcat = await category.findByPk(categoryId)
         // console.log(findcat)
+        // const imageUrl1 = req.filename
+        // console.log(imageUrl1)
+    
         if(findcat){
                 const userId = req.userData.userId
                 const post = await Post.create({
-                title:req.body.title,
-                content:req.body.content,
-                imageUrl:req.body.imageUrl,
+                title,
+                content,
+                imageUrl:req.file.path,
                 categoryId:req.body.categoryId,
                 userId:req.userData.userId
             })
-            return res.status(201).json({ message: "Post Created Successfully" });
+            return res.status(201).json({ message: "Post Created Successfully"});
         }else{
             return res.status(400).json({ message: "Category Id not Found" });
         }
@@ -42,6 +49,19 @@ module.exports.viewPost = async (req,res) => {
         return res.status(500).json({ error: "Internal Server Error" });
     }
 }
+
+// module.exports.viewImage = async (req,res) => {
+//     try {
+//         const url = req.params.path
+//         const getPost = await Post.findOne({imageUrl: url})
+//         // const getPost = await req.body
+//         // console.log(getPost)
+//         return res.status(200).json({getPost})
+//     } catch (error) {
+//         console.error("Error Getting Post:", error);
+//         return res.status(500).json({ error: "Internal Server Error" });
+//     }
+// }
 
 // Update Post
 module.exports.updatePost = async (req,res) =>{

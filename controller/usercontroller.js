@@ -3,21 +3,26 @@ const sequelize = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const randomstring = require("randomstring");
-
 const mailer = require("../helpers/mailer");
+const { validationResult } = require('express-validator')
 
 //Signin User
 module.exports.signin = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "Please Fill the all Fields" });
+    // if (!name || !email || !password) {
+    //   return res.status(400).json({ message: "Please Fill the all Fields" });
+    // }
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      return res.status(400).json({ errors: errors.array()});
     }
+
     const userExist = await User.findOne({ where: { email: email } });
 
     if (userExist) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(409).json({ message: "User already exists" });
     } else {
       req.body.password = await bcrypt.hash(password, 10);
       const user = await User.create(req.body);
@@ -83,7 +88,7 @@ module.exports.login = async (req, res) => {
             token: token,
           });
         } else {
-          return res.status(404).json({ message: "Invalid credentials" });
+          return res.status(400).json({ message: "Invalid credentials" });
         }
       });
     }
@@ -137,6 +142,7 @@ module.exports.updatePassword = async (req, res) => {
   }
 };
 
+// Mail Verification
 module.exports.mailVerification = async (req, res) => {
   try {
     if (req.query.id == undefined) {
@@ -165,6 +171,7 @@ module.exports.mailVerification = async (req, res) => {
   }
 };
 
+// Again mail verification
 module.exports.sendMailVerification = async (req, res) => {
   try {
     const { email } = req.body;
@@ -180,7 +187,7 @@ module.exports.sendMailVerification = async (req, res) => {
     }
 
     if (userData.is_verified == 1) {
-      return res.status(400).json({ message: "Mail is already verified!" });
+      return res.status(409).json({ message: "Mail is already verified!" });
     }
 
     const msg =
@@ -202,6 +209,7 @@ module.exports.sendMailVerification = async (req, res) => {
   }
 };
 
+// Send Forget Password Link
 module.exports.forget_password = async (req,res) => {
   try {
     const email = req.body.email
@@ -233,6 +241,7 @@ module.exports.forget_password = async (req,res) => {
   }
 }
 
+// Reset Password Link
 module.exports.reset_password = async (req, res) => {
   try {
       const token = req.query.token;
@@ -257,6 +266,7 @@ module.exports.reset_password = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 }
+
 // get All User
 // module.exports.viewUser = async (req,res,next) => {
 //     try {
