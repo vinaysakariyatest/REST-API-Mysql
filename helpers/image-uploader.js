@@ -6,7 +6,7 @@ const storage = multer.diskStorage({
         cb(null, './public/Images');
     },
     filename: function(req, file, cb){
-        const name = Date.now() + '-' + file.originalname;
+        const name = file.originalname;
         cb(null, name, function(error1, success1){
             if(error1) throw error1
         })
@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 })
 
 // const fileFilter = (req, file, cb) => {
-//     if(file.mimetype === 'imageUrl/jpg' || file.mimetype === 'imageUrl/png'){
+//     if(file.mimetype === 'image/jpg' || file.mimetype === 'image/png'){
 //         cb(null, true);
 //     }else{
 //         cb(new Error('Unsupported file type'), false);
@@ -30,5 +30,4 @@ module.exports = {
     upload
 }
 
-// module.exports.
 

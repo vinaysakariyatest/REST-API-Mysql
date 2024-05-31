@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const randomstring = require("randomstring");
 const mailer = require("../helpers/mailer");
 const { validationResult } = require('express-validator')
+const cookie = require('cookie-parser')
 
 //Signin User
 module.exports.signin = async (req, res) => {
@@ -47,13 +48,19 @@ module.exports.signin = async (req, res) => {
 // Login User
 module.exports.login = async (req, res) => {
   try {
+
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      return res.status(400).json({ errors: errors.array()});
+    }
+
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Please enter your email and password" });
-    }
+    // if (!email || !password) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "Please enter your email and password" });
+    // }
 
     const userLogin = await User.findOne({ where: { email: email } });
 
@@ -81,8 +88,16 @@ module.exports.login = async (req, res) => {
               email: userLogin.email,
               userId: userLogin.id,
             },
-            process.env.SECRET_KEY
+            process.env.SECRET_KEY,
+            {
+              expiresIn:'1h'
+            }
           );
+          // res.cookie('token', token, { maxAge: 60000 });
+          // res.cookie("jwt", token, {
+          //   expires: new Date(Date.now() + 600000),
+          //   httpOnly: true
+          // })
           return res.status(200).json({
             message: "Login successfully",
             token: token,
@@ -96,8 +111,17 @@ module.exports.login = async (req, res) => {
     console.error("Error creating User:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
-};
+}
 
+module.exports.logout = async(req, res) => {
+  try {
+    res.clearCookie('jwt');
+    // await req.userData.save();
+    return res.status(202).json({message:"Logged out"})
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+}
 // Update Password
 module.exports.updatePassword = async (req, res) => {
   try {
@@ -267,6 +291,18 @@ module.exports.reset_password = async (req, res) => {
   }
 }
 
+
+// User Profile
+// module.exports.userProfile = async(req, res) => {
+//   try {
+//     return res.status(200).json({
+//       data: req.userData
+//     })
+//   } catch (error) {
+//     // console.log(error.message);
+//     return res.status(500).json({message: error.message});
+//   }
+// }
 // get All User
 // module.exports.viewUser = async (req,res,next) => {
 //     try {

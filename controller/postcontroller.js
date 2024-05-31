@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const path = require('path')
 const multer = require('multer');
 const { where } = require('sequelize');
+// const { validationResult } = require('express-validator');
 
 module.exports.createPost = async (req, res) => {
     try {
@@ -11,18 +12,29 @@ module.exports.createPost = async (req, res) => {
         // if(!title || !content || !imageUrl || !categoryId){
         //     return res.status(400).json({ message: "Please Fill the all Fields" });
         // }
-
+        // const errors = validationResult(req);
+        // if(!errors.isEmpty()){
+        //     return res.status(400).json({ errors: errors.array()});
+        // }
         const findcat = await category.findByPk(categoryId)
         // console.log(findcat)
         // const imageUrl1 = req.filename
         // console.log(imageUrl1)
+        // const filePaths = req.files.map(file => file.path);
+        // const filenames = req.files.map(file => path.basename(file.path));
+        // const filenames = req.files.map(file => {
+        //     const fileInfo = path.parse(file.originalname);
+        //     return fileInfo.name + fileInfo.ext;
+        // });
+        const filenames = req.files.map(file => file.originalname);
+
     
         if(findcat){
                 const userId = req.userData.userId
                 const post = await Post.create({
                 title,
                 content,
-                imageUrl:req.file.path,
+                imageUrl:filenames,
                 categoryId:req.body.categoryId,
                 userId:req.userData.userId
             })
@@ -42,7 +54,8 @@ module.exports.viewPost = async (req,res) => {
     try {
         const getPost = await Post.findAll()
         // const getPost = await req.body
-        console.log(getPost)
+        // console.log(getPost)
+        res.cookie('Data','View Data', { expire: 60000 + Date.now() });
         return res.status(200).json({getPost})
     } catch (error) {
         console.error("Error Getting Post:", error);

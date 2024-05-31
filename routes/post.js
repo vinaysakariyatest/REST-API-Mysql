@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const post = require('../controller/postcontroller');
 const auth = require('../middleware/auth');
-const multer= require('multer');
-const path = require('path');
-
+// const multer= require('multer');
+// const path = require('path');
 const {upload} = require('../helpers/image-uploader')
-
+// const { postValidation } = require('../helpers/validation')
+ 
 // const storage = multer.diskStorage({
 //     destination:function(req, file, cb){
 //         cb(null,path.join(__dirname,'../public/Images'),function(error, success){
@@ -24,7 +24,7 @@ const {upload} = require('../helpers/image-uploader')
 
 // const upload = multer({storage:storage})
 
-router.post('/',auth.check_token,upload.single('imageUrl'),post.createPost)
+router.post('/',auth.check_token,upload.array('imageUrl'),post.createPost)
 router.get('/',post.viewPost)
 
 // router.get('/:url',post.viewImage)

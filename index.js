@@ -12,7 +12,6 @@ app.set('view engine', 'ejs');
 app.set('views','./views')
 app.use(express.static('public'));
 
-
 const userRoute = require('./routes/user')
 const postRoute = require('./routes/post')
 const commentRoute = require('./routes/comment');
@@ -29,5 +28,5 @@ app.use('/',authRoute)
 const PORT = process.env.PORT
 
 app.listen(PORT,() => {
-    console.log(`Seerver is running at PORT Number ${PORT}`)
+    console.log(`Server is running at PORT Number ${PORT}`)
 })
