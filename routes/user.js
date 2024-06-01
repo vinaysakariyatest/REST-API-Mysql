@@ -8,7 +8,7 @@ router.post('/signin',signinValidation,user.signin)
 
 router.post('/login',loginValidation,user.login)
 
-router.get('/logout',auth.check_token,user.logout)
+// router.get('/logout',auth.check_token,user.logout)
 
 router.post('/send-mail-verification',user.sendMailVerification)
 

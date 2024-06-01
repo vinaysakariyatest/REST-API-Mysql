@@ -23,7 +23,7 @@ module.exports.signin = async (req, res) => {
     const userExist = await User.findOne({ where: { email: email } });
 
     if (userExist) {
-      return res.status(409).json({ message: "User already exists" });
+      return res.status(409).json({ message: "Email is already exists" });
     } else {
       req.body.password = await bcrypt.hash(password, 10);
       const user = await User.create(req.body);
@@ -37,11 +37,11 @@ module.exports.signin = async (req, res) => {
 
       mailer.sendMail(email, "Mail verification", msg);
 
-      return res.status(201).json({ message: "User Created Successfully" });
+      return res.status(201).json({ message: "Please check your mail box and verify your email" });
     }
   } catch (error) {
-    console.error("Error creating User:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    // console.error("Error creating User:", error);
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -63,11 +63,14 @@ module.exports.login = async (req, res) => {
     // }
 
     const userLogin = await User.findOne({ where: { email: email } });
+    // const isVerified = await userLogin.is_verified
 
     if (!userLogin) {
       return res.status(400).json({ message: "Invalid credentials" });
+
     } else {
       // const isMatch = await bcrypt.compare(password, userLogin.password);
+      
       bcrypt.compare(password, userLogin.password, function (error, result) {
         // if(isMatch){
         //     const token = jwt.sign({
@@ -88,10 +91,7 @@ module.exports.login = async (req, res) => {
               email: userLogin.email,
               userId: userLogin.id,
             },
-            process.env.SECRET_KEY,
-            {
-              expiresIn:'1h'
-            }
+            process.env.SECRET_KEY
           );
           // res.cookie('token', token, { maxAge: 60000 });
           // res.cookie("jwt", token, {
@@ -108,12 +108,13 @@ module.exports.login = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Error creating User:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    // console.error("Error creating User:", error);
+    return res.status(500).json({ message: error.message });
   }
 }
 
-module.exports.logout = async(req, res) => {
+// Logout
+/*module.exports.logout = async(req, res) => {
   try {
     res.clearCookie('jwt');
     // await req.userData.save();
@@ -121,7 +122,8 @@ module.exports.logout = async(req, res) => {
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
-}
+}*/
+
 // Update Password
 module.exports.updatePassword = async (req, res) => {
   try {
@@ -174,10 +176,10 @@ module.exports.mailVerification = async (req, res) => {
     }
     const userData = await User.findOne({ where: { id: req.query.id } });
 
-    if (userData) {
+    if (userData) {   
       if (userData.is_verified == 1) {
         return res.render("mail-verification", {
-          message: "Your mail already verified Successfully",
+          message: "Your mail is already verified",
         });
       }
 
@@ -286,8 +288,8 @@ module.exports.reset_password = async (req, res) => {
         return res.status(400).json({ message: "This link has expired." });  
       }
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal Server Error", error: error.message });
+    // console.error(error);
+    return res.status(500).json({ message: error.message });
   }
 }
 
