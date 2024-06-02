@@ -17,12 +17,16 @@ const postRoute = require('./routes/post')
 const commentRoute = require('./routes/comment');
 const catRoute = require('./routes/category')
 const authRoute = require('./routes/authRoute')
+const adminRoute = require('./routes/admin')
+const bloggerRoute = require('./routes/blogger');
 
 app.use("/users",userRoute)
 app.use("/post",postRoute)
 app.use("/comment",commentRoute)
 app.use('/category',catRoute)
 app.use('/',authRoute)
+app.use('/admin',adminRoute)
+app.use('/blogger',bloggerRoute)
 // app.use(require('./routes/user'))
 
 const PORT = process.env.PORT

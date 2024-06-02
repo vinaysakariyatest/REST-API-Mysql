@@ -33,8 +33,8 @@ router.put('/:id',auth.check_token,post.updatePost)
 
 router.delete('/:id',auth.check_token,post.deletePost)
 
-router.post('/like/:postId',auth.check_token,post.likePost)
-router.post('/dislike/:postId',auth.check_token,post.dislikePost)
+// router.post('/like/:postId',auth.check_token,post.likePost)
+// router.post('/dislike/:postId',auth.check_token,post.dislikePost)
 
 // router.get('/download/:url',post.download)
 module.exports = router

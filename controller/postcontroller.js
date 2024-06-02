@@ -120,7 +120,7 @@ module.exports.deletePost = async(req,res) => {
 }
 
 // Like Post
-module.exports.likePost = async(req, res) => {
+// module.exports.likePost = async(req, res) => {
     // try {
     //     const postId = req.params.postId
     //     const userId = req.userData.userId
@@ -153,88 +153,69 @@ module.exports.likePost = async(req, res) => {
     //     return res.status(500).json({ message: error.message });
     // }
 
-    try {
-        const postId = req.params.postId;
-        const userId = req.userData.userId;
+//     try {
+//         const postId = req.params.postId;
+//         const userId = req.userData.userId;
 
-        const postExist = await Post.findOne({ where: { id: postId } });
+//         const postExist = await Post.findOne({where:{id: postId}})
 
-        if (!postExist) {
-            return res.status(404).json({ message: "Post not found" });
-        }
+//         if(!postExist){
+//             return res.status(404).json({message:"Post not found"});
+//         }
 
-        // Ensure likedBy and dislikedBy arrays are initialized
-        if (!Array.isArray(postExist.likedBy)) {
-            postExist.likedBy = [];
-        }
+//         var counter = ''
+//         if(postExist){
+//             counter += 1;
 
-        if (!Array.isArray(postExist.dislikedBy)) {
-            postExist.dislikedBy = [];
-        }
-
-        if (postExist.likedBy.includes(userId)) {
-            return res.status(400).json({ message: "Post already liked" });
-        }
-
-        if (postExist.dislikedBy.includes(userId)) {
-            // Remove userId from dislikedBy array
-            postExist.dislikedBy = postExist.dislikedBy.filter(user => user !== userId);
-            postExist.dislikes -= 1;
-        }
-
-        postExist.likedBy.push(userId);
-        postExist.likes += 1;
-
-        await postExist.save(); // Save changes to the database
-        return res.status(200).json(postExist);
-
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
-}
+//             await Post.push(counter, {where:{id: postId}})
+//         }
+//     } catch (error) {
+//         return res.status(500).json({ message: error.message });
+//     }
+// }
 
 // Dislike Post
 
-module.exports.dislikePost = async(req, res) => {
-    try {
-        const postId = req.params.postId;
-        const userId = req.userData.userId;
+// module.exports.dislikePost = async(req, res) => {
+//     try {
+//         const postId = req.params.postId;
+//         const userId = req.userData.userId;
 
-        const postExist = await Post.findOne({ where: { id: postId } });
+//         const postExist = await Post.findOne({ where: { id: postId } });
 
-        if (!postExist) {
-            return res.status(404).json({ message: "Post not found" });
-        }
+//         if (!postExist) {
+//             return res.status(404).json({ message: "Post not found" });
+//         }
 
-        // Ensure likedBy and dislikedBy arrays are initialized
-        if (!Array.isArray(postExist.likedBy)) {
-            postExist.likedBy = [];
-        }
+//         // Ensure likedBy and dislikedBy arrays are initialized
+//         if (!Array.isArray(postExist.likedBy)) {
+//             postExist.likedBy = [];
+//         }
 
-        if (!Array.isArray(postExist.dislikedBy)) {
-            postExist.dislikedBy = [];
-        }
+//         if (!Array.isArray(postExist.dislikedBy)) {
+//             postExist.dislikedBy = [];
+//         }
 
-        if (postExist.dislikedBy.includes(userId)) {
-            return res.status(400).json({ message: "Post already disliked" });
-        }
+//         if (postExist.dislikedBy.includes(userId)) {
+//             return res.status(400).json({ message: "Post already disliked" });
+//         }
 
-        if (postExist.likedBy.includes(userId)) {
-            // Remove userId from likedBy array
-            postExist.likedBy = postExist.likedBy.filter(user => user !== userId);
-            postExist.likes -= 1;
-        }
+//         if (postExist.likedBy.includes(userId)) {
+//             // Remove userId from likedBy array
+//             postExist.likedBy = postExist.likedBy.filter(user => user !== userId);
+//             postExist.likes -= 1;
+//         }
 
-        postExist.dislikedBy.push(userId);
-        postExist.dislikes += 1;
+//         postExist.dislikedBy.push(userId);
+//         postExist.dislikes += 1;
 
-        await postExist.save(); // Save changes to the database
-        return res.status(200).json(postExist);
+//         await postExist.save(); // Save changes to the database
+//         return res.status(200).json(postExist);
 
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
-}
+//     } catch (error) {
+//         return res.status(500).json({ message: error.message });
+//     }
+// }
 // Download Image
 // module.exports.download = async (req, res) => {
 //     try {

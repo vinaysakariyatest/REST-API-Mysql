@@ -15,3 +15,9 @@ exports.loginValidation = [
     check('email', 'Email is required').not().isEmpty(),
     check('password', 'Password is required').not().isEmpty(),
 ]
+
+exports.addBlogger = [
+    check('name', 'Name is required').not().isEmpty(),
+    check('email', 'Please include a valid email address').isEmail().normalizeEmail({gmail_remove_dots: true}),
+    check('password', 'Password is required').not().isEmpty(),
+]
