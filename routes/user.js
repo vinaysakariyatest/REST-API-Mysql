@@ -18,11 +18,13 @@ router.post('/forget-password',user.forget_password)
 
 router.get('/reset-password',user.reset_password)
 
-// router.get('/profile',auth.check_token,user.userProfile)
+router.put('/likes/:id',auth.check_token,user.addLike)
 
-// router.get('/',user.viewUser)
-// router.put('/:id',user.updateUser)
-// router.delete('/:id',user.deleteUser)
+router.get('/comments',auth.check_token,user.showComment)
+
+router.put('/comments/:id',auth.check_token,user.commentEdit)
+
+router.delete('/comments/:id',auth.check_token,user.deleteComment)
 
 
 module.exports = router

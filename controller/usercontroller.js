@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User, Blog, Comment } = require("../models");
 const sequelize = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -62,7 +62,8 @@ module.exports.login = async (req, res) => {
     //     .json({ message: "Please enter your email and password" });
     // }
 
-    const userLogin = await User.findOne({ where: { email: email } });
+    const userLogin = await User.findOne
+    ({ where: { email: email } });
     // const isVerified = await userLogin.is_verified
 
     if (!userLogin) {
@@ -293,53 +294,116 @@ module.exports.reset_password = async (req, res) => {
   }
 }
 
-
-// User Profile
-// module.exports.userProfile = async(req, res) => {
+// Likes
+// module.exports.addLike = async (req, res) => {
 //   try {
-//     return res.status(200).json({
-//       data: req.userData
-//     })
+//     const userId = req.userData.userId; // Ensure we're accessing the user ID correctly
+//     const id = req.params.id
+
+//     if (!id) {
+//       return res
+//         .status(400)
+//         .json({ message: "Please pass all the required inputs!" });
+//     }
+    
 //   } catch (error) {
-//     // console.log(error.message);
-//     return res.status(500).json({message: error.message});
+//     return res.status(500).json({ message: error.message });
 //   }
 // }
-// get All User
-// module.exports.viewUser = async (req,res,next) => {
-//     try {
-//         const getUser = await User.findAll()
-//         return res.status(200).json({getUser})
-//     } catch (error) {
-//         console.error("Error creating User:", error);
-//         return res.status(500).json({ error: "Internal Server Error" });
-//     }
-// }
 
-// Delete User
-// module.exports.deleteUser = async(req,res) => {
-//     try {
-//         const {id} = req.params
+module.exports.addLike = async (req, res) => {
+  try {
+    const userId = req.userData.userId; // Ensure we're accessing the user ID correctly
+    const id = req.params.id;
 
-//         if(!id){
-//             return res
-//             .status(404)
-//             .json({message:"Please pass all the required inputs!"})
-//         }
+    if (!id) {
+      return res.status(400).json({ message: "Please pass all the required inputs!" });
+    }
 
-//         const user = await User.destroy( {where : { id } })
+    // Find the blog post by its ID
+    const blog = await Blog.findByPk(id);
 
-//         if(user === 0){
-//             return res
-//                 .status(404)
-//                 .json({message:"User not found"})
-//         }
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
 
-//         return res
-//             .status(200)
-//             .json({message:"User deleted"})
-//     } catch (error) {
-//         console.error("Error creating User:", error);
-//         return res.status(500).json({ error: "Internal Server Error" });
-//     }
-// }
+    
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// Show Comment
+module.exports.showComment = async (req, res) => {
+  try {
+    const userId = req.userData.userId;
+
+    const getComment = await Comment.findOne({ where: { userId: userId } });
+    // console.log(getBlog);
+
+    if (!getComment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    const allComments = await Comment.findAll({ where: { userId: userId } });
+
+    return res.status(200).json({
+      allComments,
+    });
+  }catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+// Edit Comment
+module.exports.commentEdit = async (req, res) => {
+  try {
+    const { id } = req.params; // Get blog post ID from request parameters
+    const userId = req.userData.userId; // Get blogger ID from user data
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: "Please pass all the required inputs!" });
+    }
+
+    const updateComment = await Comment.update(
+      { ...req.body }, 
+      { where: { id: id, userId: userId } } 
+    );
+
+    if (updateComment[0] === 0) {
+      return res.status(404).json({ message: "You can't update this Comment" });
+    }
+
+    return res.status(200).json({ message: "Comment updated" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports.deleteComment = async (req, res) => {
+  try {
+    const userId = req.userData.userId;
+    const id = req.params.id;
+
+    
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: "Please pass all the required inputs!" });
+    }
+
+    const commentDelete = await Comment.destroy({ where: { id: id, userId: userId } });
+
+    if (commentDelete === 0) {
+      return res.status(404).json({ message: "You can't Delete this Comment" });
+    }
+
+    return res.status(200).json({ message: "Comment Deleted" });
+
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+

@@ -15,7 +15,6 @@ app.use(express.static('public'));
 const userRoute = require('./routes/user')
 const postRoute = require('./routes/post')
 const commentRoute = require('./routes/comment');
-const catRoute = require('./routes/category')
 const authRoute = require('./routes/authRoute')
 const adminRoute = require('./routes/admin')
 const bloggerRoute = require('./routes/blogger');
@@ -23,7 +22,6 @@ const bloggerRoute = require('./routes/blogger');
 app.use("/users",userRoute)
 app.use("/post",postRoute)
 app.use("/comment",commentRoute)
-app.use('/category',catRoute)
 app.use('/',authRoute)
 app.use('/admin',adminRoute)
 app.use('/blogger',bloggerRoute)

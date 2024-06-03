@@ -1,4 +1,4 @@
-const { blogger, admin } = require("../models");
+const { blogger, admin, Blog, category } = require("../models");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -126,3 +126,131 @@ module.exports.deleteBlogger = async(req,res) => {
     }
 }
 
+// Update Blog
+module.exports.updateBlog = async (req, res) => {
+    try {
+        const {id} = req.params
+
+        if(!id) {
+            return res
+                .status(400)
+                .json({message:"Please pass all the required inputs!"})
+        }
+
+        const blogUpdate = await Blog.update(
+            {...req.body},
+            {where: {id: id}},
+        );
+
+        if(blogUpdate[0] === 0){
+            return res.status(404).json({message:"Blog Not Found"})
+        }
+
+        return res.status(200)
+        .json({message:"Blog updated"})
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+// Delete Blog
+module.exports.deleteBlog = async (req, res) => {
+    try {
+        const {id} = req.params
+
+        if(!id) {
+            return res
+                .status(400)
+                .json({message:"Please pass all the required inputs!"})
+        }
+
+        const Blogdelete = await Blog.destroy( {where : { id } })
+
+        if(Blogdelete === 0){
+            return res
+                .status(404)
+                .json({message:"Blog not found"})
+        }
+
+        return res
+            .status(200)
+            .json({message:"Blog deleted"})
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+// Add Category
+module.exports.addcategory = async (req,res)=>{
+    try {
+        const { name } = req.body
+
+        if(!name){
+            return res.status(400).json({message:"Please Fill the all Fields"})
+        }
+
+        const addCtegory = await category.create(req.body)
+        console.log(addCtegory)
+        return res.status(201).json({ message: "Category Added" });
+
+    } catch (error) {
+        console.error("Error Category Added:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+// Update Blogger
+module.exports.updateCategory = async (req, res) => {
+    try {
+        const {id} = req.params
+
+        if(!id) {
+            return res
+                .status(400)
+                .json({message:"Please pass all the required inputs!"})
+        }
+
+        const categoryUpdate = await category.update(
+            {...req.body},
+            {where : {id}}
+        )
+
+        if(categoryUpdate[0] === 0){
+            return res.status(404).json({message:"Category Not Found"})
+        }
+
+        return res.status(200)
+        .json({message:"Category updated"})
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+// Delete Category
+module.exports.deleteCategory = async (req, res) => {
+    try {
+        const {id} = req.params
+
+        if(!id) {
+            return res
+                .status(400)
+                .json({message:"Please pass all the required inputs!"})
+        }
+
+        const Categorydelete = await category.destroy( {where : { id } })
+
+        if(Categorydelete === 0){
+            return res
+                .status(404)
+                .json({message:"Category not found"})
+        }
+
+        return res
+            .status(200)
+            .json({message:"Category deleted"})
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
