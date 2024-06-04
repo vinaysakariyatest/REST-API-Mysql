@@ -19,17 +19,23 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.ARRAY(DataTypes.STRING),
     categoryId: DataTypes.INTEGER,
     bloggerId: DataTypes.INTEGER,
-    likes: DataTypes.INTEGER,
-    dislikes: DataTypes.INTEGER,
+    likes: {
+      type:DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    dislikes: {
+      type:DataTypes.INTEGER,
+      defaultValue: 0
+    },
     likedBy: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER),
+      type: DataTypes.JSON,
       references: {
           model: 'Users', // Name of the target model
           key: 'id', // Key in the target model
       },
   },
   dislikedBy: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER),
+      type: DataTypes.JSON,
       references: {
           model: 'Users', // Name of the target model
           key: 'id', // Key in the target model

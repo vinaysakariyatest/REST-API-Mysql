@@ -1,8 +1,9 @@
 const express = require('express')
 const router = express.Router();
-const user = require('../controller/usercontroller')
+const user = require('../controller/user')
 const { signinValidation, loginValidation } = require('../helpers/validation');
-const auth = require('../middleware/auth')
+const auth = require('../middleware/auth');
+const { check } = require('express-validator');
 
 router.post('/signin',signinValidation,user.signin)
 
@@ -19,6 +20,8 @@ router.post('/forget-password',user.forget_password)
 router.get('/reset-password',user.reset_password)
 
 router.put('/likes/:id',auth.check_token,user.addLike)
+
+router.put('/dislikes/:id',auth.check_token,user.addDislike)
 
 router.get('/comments',auth.check_token,user.showComment)
 

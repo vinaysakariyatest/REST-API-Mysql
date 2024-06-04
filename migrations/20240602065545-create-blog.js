@@ -28,20 +28,23 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       likes: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
       },
       dislikes: {
         type: Sequelize.INTEGER
       },
       likedBy: {
-        type: Sequelize.ARRAY[DataTypes.INTEGER],
+        type: Sequelize.JSON,
+        defaultValue: [],
         references: {
           model: "Users", // Name of the target model
           key: "id", // Key in the target model
         },
       },
       dislikedBy: {
-        type: Sequelize.ARRAY[DataTypes.INTEGER],
+        type: Sequelize.JSON,
+        defaultValue: [],
         references: {
           model: "Users", // Name of the target model
           key: "id", // Key in the target model

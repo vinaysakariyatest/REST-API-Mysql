@@ -4,8 +4,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const randomstring = require("randomstring");
 const mailer = require("../helpers/mailer");
-const { validationResult } = require('express-validator')
-const cookie = require('cookie-parser')
+const { validationResult } = require("express-validator");
+const cookie = require("cookie-parser");
 
 //Signin User
 module.exports.signin = async (req, res) => {
@@ -16,8 +16,8 @@ module.exports.signin = async (req, res) => {
     //   return res.status(400).json({ message: "Please Fill the all Fields" });
     // }
     const errors = validationResult(req);
-    if(!errors.isEmpty()){
-      return res.status(400).json({ errors: errors.array()});
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
     const userExist = await User.findOne({ where: { email: email } });
@@ -37,7 +37,9 @@ module.exports.signin = async (req, res) => {
 
       mailer.sendMail(email, "Mail verification", msg);
 
-      return res.status(201).json({ message: "Please check your mail box and verify your email" });
+      return res
+        .status(201)
+        .json({ message: "Please check your mail box and verify your email" });
     }
   } catch (error) {
     // console.error("Error creating User:", error);
@@ -48,10 +50,9 @@ module.exports.signin = async (req, res) => {
 // Login User
 module.exports.login = async (req, res) => {
   try {
-
     const errors = validationResult(req);
-    if(!errors.isEmpty()){
-      return res.status(400).json({ errors: errors.array()});
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
     const { email, password } = req.body;
@@ -62,16 +63,14 @@ module.exports.login = async (req, res) => {
     //     .json({ message: "Please enter your email and password" });
     // }
 
-    const userLogin = await User.findOne
-    ({ where: { email: email } });
+    const userLogin = await User.findOne({ where: { email: email } });
     // const isVerified = await userLogin.is_verified
 
     if (!userLogin) {
       return res.status(400).json({ message: "Invalid credentials" });
-
     } else {
       // const isMatch = await bcrypt.compare(password, userLogin.password);
-      
+
       bcrypt.compare(password, userLogin.password, function (error, result) {
         // if(isMatch){
         //     const token = jwt.sign({
@@ -112,7 +111,7 @@ module.exports.login = async (req, res) => {
     // console.error("Error creating User:", error);
     return res.status(500).json({ message: error.message });
   }
-}
+};
 
 // Logout
 /*module.exports.logout = async(req, res) => {
@@ -177,7 +176,7 @@ module.exports.mailVerification = async (req, res) => {
     }
     const userData = await User.findOne({ where: { id: req.query.id } });
 
-    if (userData) {   
+    if (userData) {
       if (userData.is_verified == 1) {
         return res.render("mail-verification", {
           message: "Your mail is already verified",
@@ -237,100 +236,212 @@ module.exports.sendMailVerification = async (req, res) => {
 };
 
 // Send Forget Password Link
-module.exports.forget_password = async (req,res) => {
+module.exports.forget_password = async (req, res) => {
   try {
-    const email = req.body.email
-    const userData = await User.findOne({where:{email:email}})
+    const email = req.body.email;
+    const userData = await User.findOne({ where: { email: email } });
 
-    if(userData){
+    if (userData) {
       const randomString = randomstring.generate();
-      await User.update(
-        {token: randomString},
-        {where:{email:email}})
+      await User.update({ token: randomString }, { where: { email: email } });
 
-        // const msg ="<p> Hii " +userData.name +', Please copy the link and <a href="http://localhost:4000/reset-password?token='+token+'">Verify</a> reset your password.</p>';
-        const msg = `
+      // const msg ="<p> Hii " +userData.name +', Please copy the link and <a href="http://localhost:4000/reset-password?token='+token+'">Verify</a> reset your password.</p>';
+      const msg = `
             <p>Hi ${userData.name},</p>
             <p>Please copy the link and <a href="http://localhost:4000/users/reset-password?token=${randomString}">reset your password</a>.</p>
         `;
 
+      mailer.sendMail(email, "For Reset Password", msg);
 
-        mailer.sendMail(email, "For Reset Password", msg);
-
-        return res.status(200).json({message:"Please check your email and reset your Password"})
-    }else{
-      return res.status(400).json({message: "Invalid Email"});
+      return res
+        .status(200)
+        .json({ message: "Please check your email and reset your Password" });
+    } else {
+      return res.status(400).json({ message: "Invalid Email" });
     }
   } catch (error) {
     return res.status(400).json({
       message: error.message,
     });
   }
-}
+};
 
 // Reset Password Link
 module.exports.reset_password = async (req, res) => {
   try {
-      const token = req.query.token;
-      const tokenData = await User.findOne({ where: { token: token } });
+    const token = req.query.token;
+    const tokenData = await User.findOne({ where: { token: token } });
 
-      if (tokenData) {
-        const password = req.body.password;
-        const hashedNewPassword = await bcrypt.hash(password, 10);
+    if (tokenData) {
+      const password = req.body.password;
+      const hashedNewPassword = await bcrypt.hash(password, 10);
 
-        // Update the user's password and clear the token
-        await User.update(
-          { password: hashedNewPassword, token: '' ,is_verified:1},
-          { where: { id: tokenData.id } }
-        );
+      // Update the user's password and clear the token
+      await User.update(
+        { password: hashedNewPassword, token: "", is_verified: 1 },
+        { where: { id: tokenData.id } }
+      );
 
-        return res.status(200).json({ message: "Your password has been reset." });  
-      } else {
-        return res.status(400).json({ message: "This link has expired." });  
-      }
+      return res.status(200).json({ message: "Your password has been reset." });
+    } else {
+      return res.status(400).json({ message: "This link has expired." });
+    }
   } catch (error) {
     // console.error(error);
     return res.status(500).json({ message: error.message });
   }
-}
+};
 
 // Likes
-// module.exports.addLike = async (req, res) => {
-//   try {
-//     const userId = req.userData.userId; // Ensure we're accessing the user ID correctly
-//     const id = req.params.id
-
-//     if (!id) {
-//       return res
-//         .status(400)
-//         .json({ message: "Please pass all the required inputs!" });
-//     }
-    
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// }
-
 module.exports.addLike = async (req, res) => {
+
+  // try {
+  //   const userId = req.userData.userId; // Ensure we're accessing the user ID correctly
+  //   const blogId = req.params.id;
+
+  //   if (!blogId) {
+  //     return res.status(400).json({ message: "Please pass all the required inputs!" });
+  //   }
+
+  //   const blog = await Blog.findOne({ where: { id: blogId } });
+
+  //   if (!blog) {
+  //     return res.status(404).json({ message: "Blog not found" });
+  //   }
+
+  //   if (!Array.isArray(blog.likedBy)) {
+  //     blog.likedBy = [];
+  //   }
+
+  //   // Check if the user has already liked the blog
+  //   if (blog.likedBy.includes(userId)) {
+  //     return res.status(400).json({ message: "Post is already liked" });
+  //   }
+
+  //   var counter = await blog.likes +1
+
+  //   blog.likedBy.push(userId);
+
+  //   // console.log(blog.likedBy)
+  //   await Blog.update({likes: counter,likedBy: blog.likedBy},{where:{id: blogId}})
+
+  //   await blog.save();
+
+  //   return res.status(200).json({ message: "Liked successfully" });
+  // } catch (error) {
+  //   return res.status(500).json({ message: error.message });
+  // }
+
   try {
-    const userId = req.userData.userId; // Ensure we're accessing the user ID correctly
-    const id = req.params.id;
-
-    if (!id) {
-      return res.status(400).json({ message: "Please pass all the required inputs!" });
+    const userId = req.userData.userId;
+    const blogId = req.params.id;
+  
+    if (!blogId) {
+        return res.status(400).json({ message: "Please pass all the required inputs!" });
     }
-
-    // Find the blog post by its ID
-    const blog = await Blog.findByPk(id);
-
+  
+    const blog = await Blog.findOne({ where: { id: blogId } });
+  
     if (!blog) {
-      return res.status(404).json({ message: "Blog not found" });
+        return res.status(404).json({ message: "Blog not found!" });
     }
-
-    
+  
+    if (!Array.isArray(blog.likedBy)) {
+        blog.likedBy = [];
+    }
+  
+    if (!Array.isArray(blog.dislikedBy)) {
+        blog.dislikedBy = [];
+    }
+  
+    if (blog.likedBy.includes(userId)) {
+        return res.status(400).json({ message: "Post is already liked" });
+    }
+  
+    // Increment the likes count
+    let newLikesCount = blog.likes + 1;
+  
+    // Remove the user from dislikedBy and decrement the dislikes count if they had disliked it
+    if (blog.dislikedBy.includes(userId)) {
+        blog.dislikedBy = blog.dislikedBy.filter(id => id !== userId);
+        blog.dislikes = Math.max(blog.dislikes - 1, 0); // Ensure dislikes do not go below 0
+    }
+  
+    // Add the user to likedBy array
+    blog.likedBy.push(userId);
+  
+    // Update the blog in the database
+    await Blog.update(
+        {
+            likes: newLikesCount,
+            dislikes: blog.dislikes,
+            likedBy: blog.likedBy,
+            dislikedBy: blog.dislikedBy
+        },
+        { where: { id: blogId } }
+    );
+  
+    return res.status(200).json({ message: "Liked successfully" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
+};
+
+// Disliked
+module.exports.addDislike = async (req, res) => {
+  try {
+    const userId = req.userData.userId;
+    const blogId = req.params.id;
+
+    if (!blogId) {
+        return res.status(400).json({ message: "Please pass all the required inputs!" });
+    }
+
+    const blog = await Blog.findOne({ where: { id: blogId } });
+
+    if (!blog) {
+        return res.status(404).json({ message: "Blog not found!" });
+    }
+
+    if (!Array.isArray(blog.dislikedBy)) {
+        blog.dislikedBy = [];
+    }
+
+    if (!Array.isArray(blog.likedBy)) {
+        blog.likedBy = [];
+    }
+
+    if (blog.dislikedBy.includes(userId)) {
+        return res.status(400).json({ message: "Post is already disliked" });
+    }
+
+    // Increment the dislikes count
+    let newDislikesCount = blog.dislikes + 1;
+
+    // Remove the user from likedBy and decrement the likes count if they had liked it
+    if (blog.likedBy.includes(userId)) {
+        blog.likedBy = blog.likedBy.filter(id => id !== userId);
+        blog.likes = Math.max(blog.likes - 1, 0); // Ensure likes do not go below 0
+    }
+
+    // Add the user to dislikedBy array
+    blog.dislikedBy.push(userId);
+
+    // Update the blog in the database
+    await Blog.update(
+        {
+            dislikes: newDislikesCount,
+            likes: blog.likes,
+            dislikedBy: blog.dislikedBy,
+            likedBy: blog.likedBy
+        },
+        { where: { id: blogId } }
+    );
+
+    return res.status(200).json({ message: "Disliked successfully" });
+} catch (error) {
+    return res.status(500).json({ message: error.message });
+}
 };
 
 // Show Comment
@@ -350,10 +461,10 @@ module.exports.showComment = async (req, res) => {
     return res.status(200).json({
       allComments,
     });
-  }catch (error) {
+  } catch (error) {
     return res.status(500).json({ message: error.message });
   }
-}
+};
 
 // Edit Comment
 module.exports.commentEdit = async (req, res) => {
@@ -368,8 +479,8 @@ module.exports.commentEdit = async (req, res) => {
     }
 
     const updateComment = await Comment.update(
-      { ...req.body }, 
-      { where: { id: id, userId: userId } } 
+      { ...req.body },
+      { where: { id: id, userId: userId } }
     );
 
     if (updateComment[0] === 0) {
@@ -387,23 +498,22 @@ module.exports.deleteComment = async (req, res) => {
     const userId = req.userData.userId;
     const id = req.params.id;
 
-    
     if (!id) {
       return res
         .status(400)
         .json({ message: "Please pass all the required inputs!" });
     }
 
-    const commentDelete = await Comment.destroy({ where: { id: id, userId: userId } });
+    const commentDelete = await Comment.destroy({
+      where: { id: id, userId: userId },
+    });
 
     if (commentDelete === 0) {
       return res.status(404).json({ message: "You can't Delete this Comment" });
     }
 
     return res.status(200).json({ message: "Comment Deleted" });
-
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
-}
-
+};

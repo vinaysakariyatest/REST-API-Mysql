@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router();
-const cmt = require('../controller/commentcontroller')
+const cmt = require('../controller/comment')
 const auth = require('../middleware/auth')
 
 router.post('/',auth.check_token,cmt.creaetComment)
