@@ -2,7 +2,10 @@ const {check} = require('express-validator');
 
 exports.signinValidation = [
     check('name', 'Name is required').not().isEmpty(),
-    check('email', 'Please include a valid email address').isEmail().normalizeEmail({gmail_remove_dots: true}),
+    check('email', 'Please include a valid email address').isEmail().normalizeEmail(),
+    check('password').isLength({
+        min:4
+    }).withMessage('Password must be at least 4 characters required')
 ]
 
 exports.postValidation = [
@@ -19,7 +22,9 @@ exports.loginValidation = [
 exports.addBlogger = [
     check('name', 'Name is required').not().isEmpty(),
     check('email', 'Please include a valid email address').isEmail().normalizeEmail({gmail_remove_dots: true}),
-    check('password', 'Password is required').not().isEmpty(),
+    check('password').not().isEmpty().isLength({
+        min:4
+    }).withMessage('Password at least 4 characters required'),
 ]
 
 // exports.createBlog = [

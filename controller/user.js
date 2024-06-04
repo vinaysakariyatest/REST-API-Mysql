@@ -1,4 +1,4 @@
-const { User, Blog, Comment } = require("../models");
+const { User, Blog, Comment, category, blogger } = require("../models");
 const sequelize = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -255,7 +255,9 @@ module.exports.forget_password = async (req, res) => {
 
       return res
         .status(200)
-        .json({ message: "Please check your email and reset your Password" });
+        .json({
+          message: "Please check your mail box and reset your Password",
+        });
     } else {
       return res.status(400).json({ message: "Invalid Email" });
     }
@@ -294,7 +296,6 @@ module.exports.reset_password = async (req, res) => {
 
 // Likes
 module.exports.addLike = async (req, res) => {
-
   // try {
   //   const userId = req.userData.userId; // Ensure we're accessing the user ID correctly
   //   const blogId = req.params.id;
@@ -335,52 +336,54 @@ module.exports.addLike = async (req, res) => {
   try {
     const userId = req.userData.userId;
     const blogId = req.params.id;
-  
+
     if (!blogId) {
-        return res.status(400).json({ message: "Please pass all the required inputs!" });
+      return res
+        .status(400)
+        .json({ message: "Please pass all the required inputs!" });
     }
-  
+
     const blog = await Blog.findOne({ where: { id: blogId } });
-  
+
     if (!blog) {
-        return res.status(404).json({ message: "Blog not found!" });
+      return res.status(404).json({ message: "Blog not found!" });
     }
-  
+
     if (!Array.isArray(blog.likedBy)) {
-        blog.likedBy = [];
+      blog.likedBy = [];
     }
-  
+
     if (!Array.isArray(blog.dislikedBy)) {
-        blog.dislikedBy = [];
+      blog.dislikedBy = [];
     }
-  
+
     if (blog.likedBy.includes(userId)) {
-        return res.status(400).json({ message: "Post is already liked" });
+      return res.status(400).json({ message: "Post is already liked" });
     }
-  
+
     // Increment the likes count
     let newLikesCount = blog.likes + 1;
-  
+
     // Remove the user from dislikedBy and decrement the dislikes count if they had disliked it
     if (blog.dislikedBy.includes(userId)) {
-        blog.dislikedBy = blog.dislikedBy.filter(id => id !== userId);
-        blog.dislikes = Math.max(blog.dislikes - 1, 0); // Ensure dislikes do not go below 0
+      blog.dislikedBy = blog.dislikedBy.filter((id) => id !== userId);
+      blog.dislikes = Math.max(blog.dislikes - 1, 0); // Ensure dislikes do not go below 0
     }
-  
+
     // Add the user to likedBy array
     blog.likedBy.push(userId);
-  
+
     // Update the blog in the database
     await Blog.update(
-        {
-            likes: newLikesCount,
-            dislikes: blog.dislikes,
-            likedBy: blog.likedBy,
-            dislikedBy: blog.dislikedBy
-        },
-        { where: { id: blogId } }
+      {
+        likes: newLikesCount,
+        dislikes: blog.dislikes,
+        likedBy: blog.likedBy,
+        dislikedBy: blog.dislikedBy,
+      },
+      { where: { id: blogId } }
     );
-  
+
     return res.status(200).json({ message: "Liked successfully" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -394,25 +397,27 @@ module.exports.addDislike = async (req, res) => {
     const blogId = req.params.id;
 
     if (!blogId) {
-        return res.status(400).json({ message: "Please pass all the required inputs!" });
+      return res
+        .status(400)
+        .json({ message: "Please pass all the required inputs!" });
     }
 
     const blog = await Blog.findOne({ where: { id: blogId } });
 
     if (!blog) {
-        return res.status(404).json({ message: "Blog not found!" });
+      return res.status(404).json({ message: "Blog not found!" });
     }
 
     if (!Array.isArray(blog.dislikedBy)) {
-        blog.dislikedBy = [];
+      blog.dislikedBy = [];
     }
 
     if (!Array.isArray(blog.likedBy)) {
-        blog.likedBy = [];
+      blog.likedBy = [];
     }
 
     if (blog.dislikedBy.includes(userId)) {
-        return res.status(400).json({ message: "Post is already disliked" });
+      return res.status(400).json({ message: "Post is already disliked" });
     }
 
     // Increment the dislikes count
@@ -420,8 +425,8 @@ module.exports.addDislike = async (req, res) => {
 
     // Remove the user from likedBy and decrement the likes count if they had liked it
     if (blog.likedBy.includes(userId)) {
-        blog.likedBy = blog.likedBy.filter(id => id !== userId);
-        blog.likes = Math.max(blog.likes - 1, 0); // Ensure likes do not go below 0
+      blog.likedBy = blog.likedBy.filter((id) => id !== userId);
+      blog.likes = Math.max(blog.likes - 1, 0); // Ensure likes do not go below 0
     }
 
     // Add the user to dislikedBy array
@@ -429,19 +434,19 @@ module.exports.addDislike = async (req, res) => {
 
     // Update the blog in the database
     await Blog.update(
-        {
-            dislikes: newDislikesCount,
-            likes: blog.likes,
-            dislikedBy: blog.dislikedBy,
-            likedBy: blog.likedBy
-        },
-        { where: { id: blogId } }
+      {
+        dislikes: newDislikesCount,
+        likes: blog.likes,
+        dislikedBy: blog.dislikedBy,
+        likedBy: blog.likedBy,
+      },
+      { where: { id: blogId } }
     );
 
     return res.status(200).json({ message: "Disliked successfully" });
-} catch (error) {
+  } catch (error) {
     return res.status(500).json({ message: error.message });
-}
+  }
 };
 
 // Show Comment
@@ -456,7 +461,17 @@ module.exports.showComment = async (req, res) => {
       return res.status(404).json({ message: "Comment not found" });
     }
 
-    const allComments = await Comment.findAll({ where: { userId: userId } });
+    const allComments = await Comment.findAll({ 
+      where: { userId: userId } ,
+      include: [
+        {
+          model:User,
+          as: 'Users'
+        }
+      ]
+    },
+
+    );
 
     return res.status(200).json({
       allComments,
@@ -493,6 +508,7 @@ module.exports.commentEdit = async (req, res) => {
   }
 };
 
+// Delete Comment
 module.exports.deleteComment = async (req, res) => {
   try {
     const userId = req.userData.userId;
@@ -513,6 +529,61 @@ module.exports.deleteComment = async (req, res) => {
     }
 
     return res.status(200).json({ message: "Comment Deleted" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// Show All Comments
+module.exports.showAllComments = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: "Please pass all the required inputs!" });
+    }
+
+    const findBlog = await Comment.findAll({
+      where: { blogId: id },
+      include: [
+        {
+          model: User,
+          as: "Users",
+        },
+      ],
+    });
+
+    if (findBlog.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No comments found for this blog" });
+    } else {
+      return res.status(200).json(findBlog);
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// Show All Blogs
+module.exports.showAllBlog = async (req, res) => {
+  try {
+    const showAll = await Blog.findAll({
+      include: [
+        {
+          model:category,
+          as:'categories'
+        },
+        {
+          model:blogger,
+          as:'bloggers'
+        }
+      ]
+    });
+
+    return res.status(200).json({ message: showAll });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

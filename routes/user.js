@@ -25,9 +25,13 @@ router.put('/dislikes/:id',auth.check_token,user.addDislike)
 
 router.get('/comments',auth.check_token,user.showComment)
 
+router.get('/allComments/:id',auth.check_token,user.showAllComments)
+
 router.put('/comments/:id',auth.check_token,user.commentEdit)
 
 router.delete('/comments/:id',auth.check_token,user.deleteComment)
+
+router.get('/blog',auth.check_token,user.showAllBlog)
 
 
 module.exports = router
