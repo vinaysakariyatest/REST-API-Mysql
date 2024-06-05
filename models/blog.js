@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       )
 
       models.Blog.belongsTo(models.blogger,
-        { foreignKey: 'bloggerId', as: 'bloggers' }
+        { foreignKey: 'bloggerId', as: 'Author' }
       )
     }
   }

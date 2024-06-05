@@ -253,11 +253,9 @@ module.exports.forget_password = async (req, res) => {
 
       mailer.sendMail(email, "For Reset Password", msg);
 
-      return res
-        .status(200)
-        .json({
-          message: "Please check your mail box and reset your Password",
-        });
+      return res.status(200).json({
+        message: "Please check your mail box and reset your Password",
+      });
     } else {
       return res.status(400).json({ message: "Invalid Email" });
     }
@@ -296,42 +294,6 @@ module.exports.reset_password = async (req, res) => {
 
 // Likes
 module.exports.addLike = async (req, res) => {
-  // try {
-  //   const userId = req.userData.userId; // Ensure we're accessing the user ID correctly
-  //   const blogId = req.params.id;
-
-  //   if (!blogId) {
-  //     return res.status(400).json({ message: "Please pass all the required inputs!" });
-  //   }
-
-  //   const blog = await Blog.findOne({ where: { id: blogId } });
-
-  //   if (!blog) {
-  //     return res.status(404).json({ message: "Blog not found" });
-  //   }
-
-  //   if (!Array.isArray(blog.likedBy)) {
-  //     blog.likedBy = [];
-  //   }
-
-  //   // Check if the user has already liked the blog
-  //   if (blog.likedBy.includes(userId)) {
-  //     return res.status(400).json({ message: "Post is already liked" });
-  //   }
-
-  //   var counter = await blog.likes +1
-
-  //   blog.likedBy.push(userId);
-
-  //   // console.log(blog.likedBy)
-  //   await Blog.update({likes: counter,likedBy: blog.likedBy},{where:{id: blogId}})
-
-  //   await blog.save();
-
-  //   return res.status(200).json({ message: "Liked successfully" });
-  // } catch (error) {
-  //   return res.status(500).json({ message: error.message });
-  // }
 
   try {
     const userId = req.userData.userId;
@@ -461,18 +423,16 @@ module.exports.showComment = async (req, res) => {
       return res.status(404).json({ message: "Comment not found" });
     }
 
-    const allComments = await Comment.findAll({ 
-      where: { userId: userId } ,
+    const allComments = await Comment.findAll({
+      where: { userId: userId },
       include: [
         {
-          model:User,
-          as: 'Users'
-        }
-      ]
-    },
-
-    );
-
+          model: User,
+          as: "Users",
+          attributes: ['name']
+        },
+      ],
+    });
     return res.status(200).json({
       allComments,
     });
@@ -551,6 +511,7 @@ module.exports.showAllComments = async (req, res) => {
         {
           model: User,
           as: "Users",
+          attributes: ['name']
         },
       ],
     });
@@ -573,14 +534,16 @@ module.exports.showAllBlog = async (req, res) => {
     const showAll = await Blog.findAll({
       include: [
         {
-          model:category,
-          as:'categories'
+          model: category,
+          as: "categories",
+          attributes: ['name']
         },
         {
-          model:blogger,
-          as:'bloggers'
-        }
-      ]
+          model: blogger,
+          as: "Author",
+          attributes: ['name']
+        },
+      ],
     });
 
     return res.status(200).json({ message: showAll });

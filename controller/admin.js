@@ -2,6 +2,7 @@ const { blogger, admin, Blog, category } = require("../models");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { Model } = require("sequelize");
 
 // Login Admin
 module.exports.login = async (req, res) => {
@@ -98,6 +99,19 @@ module.exports.updateBlogger = async (req, res) => {
     }
 };
 
+// View Bloggrer
+module.exports.viewBlogger = async(req, res) => {
+    try {
+        const getBlogger = await blogger.findAll();
+
+        return res.status(200).json({
+            getBlogger
+        })
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 // Delete Blogger
 module.exports.deleteBlogger = async(req,res) => {
     try {
@@ -181,6 +195,32 @@ module.exports.deleteBlog = async (req, res) => {
     }
 }
 
+// View Blog
+module.exports.viewBlog = async (req, res) => {
+    try {
+        const getBlog = await Blog.findAll({
+            include: [
+                {
+                    model: category,
+                    as: 'categories',
+                    attributes: ['name']
+                },
+                {
+                    model: blogger,
+                    as: 'Author',
+                    attributes: ['name']
+                }
+            ]
+        });
+
+        return res.status(200).json({
+            getBlog
+        })
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 // Add Category
 module.exports.addcategory = async (req,res)=>{
     try {
@@ -250,6 +290,19 @@ module.exports.deleteCategory = async (req, res) => {
             .status(200)
             .json({message:"Category deleted"})
 
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+// View Category
+module.exports.viewCategory = async(req, res) => {
+    try {
+        const viewCategory = await category.findAll()
+
+        return res.status(200).json({ 
+            viewCategory
+        })
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

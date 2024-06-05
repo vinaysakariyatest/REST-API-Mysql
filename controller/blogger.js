@@ -1,4 +1,4 @@
-const { Blog, category, blogger, Comment } = require("../models");
+const { Blog, category, blogger, Comment, User } = require("../models");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -86,7 +86,6 @@ module.exports.findBlog = async (req, res) => {
 
     // Find a blog by bloggerId (not using primary key here)
     const getBlog = await Blog.findOne({ where: { bloggerId: bloggerId } });
-    // console.log(getBlog);
 
     // Check if a blog was found for the given bloggerId
     if (!getBlog) {
@@ -94,7 +93,17 @@ module.exports.findBlog = async (req, res) => {
     }
 
     // Find all blogs by bloggerId
-    const allBlogs = await Blog.findAll({ where: { bloggerId: bloggerId } });
+    const allBlogs = await Blog.findAll(
+      { where: { bloggerId: bloggerId },
+      
+      include: [
+        {
+          model: category,
+          as: 'categories',
+          attributes: ['name']
+        },
+      ]
+    });
 
     return res.status(200).json({
       allBlogs,
@@ -158,7 +167,20 @@ module.exports.deleteBlog = async (req, res) => {
 // Show All Blogs
 module.exports.showAllBlog = async (req, res) => {
   try {
-    const showAll = await Blog.findAll()
+    const showAll = await Blog.findAll({
+      include: [
+        {
+          model:category,
+          as:'categories',
+          attributes: ['name']
+        },
+        {
+          model:blogger,
+          as:'Author',
+          attributes: ['name']
+        }
+      ]
+    })
 
     return res.status(200).json({ message: showAll})
   } catch (error) {
@@ -179,7 +201,17 @@ module.exports.showComment = async (req, res) => {
       return res.status(404).json({ message: "Comment not found" });
     }
 
-    const allComment = await Comment.findAll({ where: { blogId: id } });
+    const allComment = await Comment.findAll(
+      { where: { blogId: id },
+      
+      include: [
+        {
+          model: User,
+          as: "Users",
+          attributes: ['name']
+        },
+      ],
+    });
 
     return res.status(200).json({
       allComment,
