@@ -20,7 +20,7 @@ module.exports.login = async (req, res) => {
     if (!bloggerLogin) {
       return res.status(400).json({ message: "Invalid credentials" });
     } else {
-      // const isMatch = await bcrypt.compare(password, userLogin.password);
+      // const isMatch = await bcrypt.compare(password, bloggerLogin.password);
 
       bcrypt.compare(password, bloggerLogin.password, function (error, result) {
         if (result == true) {
@@ -220,5 +220,6 @@ module.exports.showComment = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 }
+
 
 

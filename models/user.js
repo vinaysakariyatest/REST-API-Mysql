@@ -11,15 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      // models.User.belongsTo(models.Comment,
-      //   { foreignKey: 'userId', as:'Users' }
-      // )
     }
   }
   User.init({
     name: DataTypes.STRING,
     email: DataTypes.STRING,
-    password: DataTypes.STRING
+    password: DataTypes.STRING,
+    is_verified: DataTypes.BOOLEAN,
+    token: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'User',
