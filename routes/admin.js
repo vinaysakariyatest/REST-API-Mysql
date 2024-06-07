@@ -11,7 +11,7 @@ router.post('/login',admin.login)
 router.post('/',auth.check_token,addBlogger,admin.addBlogger)
 router.put('/:id',auth.check_token,admin.updateBlogger)
 router.delete('/:id',auth.check_token,admin.deleteBlogger)
-router.get('/',auth.check_token,admin.viewBlogger)
+router.get('/',admin.viewBlogger)
 
 // Blog
 router.put('/blog/:id',auth.check_token,admin.updateBlog)
