@@ -1,5 +1,13 @@
 {
   "development": {
+    "username": "u5ixsvbaapijs6g2",
+    "password": "3VjGoX8AYvPDQMlIz9pi",
+    "database": "byoq2pgzd8zxmqvwtdxt",
+    "host": "byoq2pgzd8zxmqvwtdxt-mysql.services.clever-cloud.com",
+    "dialect": "mysql"
+  },
+
+  "development1": {
     "username": "root",
     "password": "root",
     "database": "rest_api",
