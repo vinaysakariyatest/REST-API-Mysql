@@ -15,7 +15,7 @@ router.get('/',blogger.findBlog)
 router.put('/:id',auth.check_token,blogger.updateBlog)
 router.delete('/:id',auth.check_token,blogger.deleteBlog)
 
-router.get('/Blogs',auth.check_token,blogger.showAllBlog)
+router.get('/Blogs',blogger.showAllBlog)
 
 router.get('/comments/:id',auth.check_token,blogger.showComment)
 
