@@ -17,7 +17,7 @@ router.get('/',admin.viewBlogger)
 router.put('/blog/:id',auth.check_token,admin.updateBlog)
 router.delete('/blog/:id',auth.check_token,admin.deleteBlog)
 router.get('/blog',auth.check_token,admin.viewBlog)
-
+    
 // Category
 router.post('/category',auth.check_token,admin.addcategory)
 router.put('/category/:id',auth.check_token,admin.updateCategory)
