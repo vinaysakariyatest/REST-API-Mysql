@@ -56,7 +56,7 @@ module.exports.createBlog = async (req, res) => {
 
     if (!findcat) {
       return res.status(404).json({ message: "Category Id not Found" });
-    } else {
+    } else {  
       const bloggerId = req.userData.bloggerId;
       const bloggerData = await blogger.findOne({ where: { id: bloggerId } });
       const Active = bloggerData.isActive;
