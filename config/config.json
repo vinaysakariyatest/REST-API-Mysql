@@ -5,7 +5,7 @@
     "database":"byoq2pgzd8zxmqvwtdxt",
     "host": "byoq2pgzd8zxmqvwtdxt-mysql.services.clever-cloud.com",
     "dialect":"mysql",
-    "port":3306
+    "port":"3306"
     
   },
 
@@ -15,7 +15,7 @@
     "database": "rest_api",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "port":3306
+    "port":"3306"
   },
   "test": {
     "username": "root",
@@ -25,10 +25,11 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "username":"u5ixsvbaapijs6g2",
+    "password":"3VjGoX8AYvPDQMlIz9pi",
+    "database":"byoq2pgzd8zxmqvwtdxt",
+    "host": "byoq2pgzd8zxmqvwtdxt-mysql.services.clever-cloud.com",
+    "dialect":"mysql",
+    "port":"3306"
   }
 }
