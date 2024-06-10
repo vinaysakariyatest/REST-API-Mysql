@@ -1,4 +1,4 @@
-const { Blog, category, blogger, Comment, User } = require("../models");
+const { Blogs, category, blogger, Comment, User } = require("../models");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -167,7 +167,7 @@ module.exports.deleteBlog = async (req, res) => {
 // Show All Blogs
 module.exports.showAllBlog = async (req, res) => {
   try {
-    const showAll = await Blog.findAll({
+    const showAll = await Blogs.findAll({
       include: [
         {
           model:category,

@@ -1,5 +1,5 @@
 {
-  "development": {
+  "development1": {
     "username":"u5ixsvbaapijs6g2",
     "password":"3VjGoX8AYvPDQMlIz9pi",
     "database":"byoq2pgzd8zxmqvwtdxt",
@@ -9,7 +9,7 @@
     
   },
 
-  "development1": {
+  "development": {
     "username": "root",
     "password": "root",
     "database": "rest_api",
