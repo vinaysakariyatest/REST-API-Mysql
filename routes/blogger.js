@@ -10,7 +10,7 @@ router.post('/login',loginValidation,blogger.login)
 
 router.post('/',auth.check_token,upload.array('image'),blogger.createBlog)
 
-router.get('/',auth.check_token,blogger.findBlog)
+router.get('/',blogger.findBlog)
 
 router.put('/:id',auth.check_token,blogger.updateBlog)
 router.delete('/:id',auth.check_token,blogger.deleteBlog)
