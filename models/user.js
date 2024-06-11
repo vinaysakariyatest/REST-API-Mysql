@@ -22,8 +22,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'User',
-    tableName: 'Users',
-    freezeTableName: true, // Prevent Sequelize from automatically pluralizing the table name
+    // tableName: 'Users',
+    // freezeTableName: true, // Prevent Sequelize from automatically pluralizing the table name
 
   });
   return User;
