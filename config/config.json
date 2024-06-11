@@ -6,7 +6,6 @@
     "host": "byoq2pgzd8zxmqvwtdxt-mysql.services.clever-cloud.com",
     "dialect":"mysql",
     "port":"3306"
-    
   },
 
   "development1": {

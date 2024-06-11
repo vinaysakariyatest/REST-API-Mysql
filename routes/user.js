@@ -31,7 +31,7 @@ router.put('/comments/:id',auth.check_token,user.commentEdit)
 
 router.delete('/comments/:id',auth.check_token,user.deleteComment)
 
-router.get('/blog',auth.check_token,user.showAllBlog)
+router.get('/blog',user.showAllBlog)
 
 
 module.exports = router
