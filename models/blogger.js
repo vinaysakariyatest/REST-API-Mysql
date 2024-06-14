@@ -24,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'blogger',
-    tableName: 'Users',
-    freezeTableName: true,   });
+    tableName: 'bloggers',
+    freezeTableName: true,   
+  });
   return blogger;
 };
