@@ -19,4 +19,6 @@ router.get('/Blogs',blogger.showAllBlog)
 
 router.get('/comments/:id',auth.check_token,blogger.showComment)
 
+router.get('/user',blogger.viewUser)
+
 module.exports = router

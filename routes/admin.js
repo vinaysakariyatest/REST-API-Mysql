@@ -24,4 +24,6 @@ router.put('/category/:id',auth.check_token,admin.updateCategory)
 router.delete('/category/:id',auth.check_token,admin.deleteCategory)
 router.get('/category',admin.viewCategory)
 
+router.get('/user',admin.viewUser);
+
 module.exports = router
