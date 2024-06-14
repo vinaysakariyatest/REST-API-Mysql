@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       models.Comment.belongsTo(models.User, {
         foreignKey: "userId",
-        as: "users",
+        as: "Users",
       } );
     }
   }
