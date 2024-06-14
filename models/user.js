@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'User',
-    tableName: 'Users',
+    tableName: 'users',
     freezeTableName: true, // Prevent Sequelize from automatically pluralizing the table name
 
   });
