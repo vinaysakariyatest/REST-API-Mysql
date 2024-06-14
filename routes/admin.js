@@ -16,12 +16,12 @@ router.get('/',admin.viewBlogger)
 // Blog
 router.put('/blog/:id',auth.check_token,admin.updateBlog)
 router.delete('/blog/:id',auth.check_token,admin.deleteBlog)
-router.get('/blog',auth.check_token,admin.viewBlog)
+router.get('/blog',admin.viewBlog)
     
 // Category
 router.post('/category',auth.check_token,admin.addcategory)
 router.put('/category/:id',auth.check_token,admin.updateCategory)
 router.delete('/category/:id',auth.check_token,admin.deleteCategory)
-router.get('/category',auth.check_token,admin.viewCategory)
+router.get('/category',admin.viewCategory)
 
 module.exports = router
