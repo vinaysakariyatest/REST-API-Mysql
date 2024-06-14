@@ -207,7 +207,7 @@ module.exports.showComment = async (req, res) => {
       include: [
         {
           model: User,
-          as: "Users",
+          as: "users",
           attributes: ['name']
         },
       ],
